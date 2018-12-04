@@ -3,20 +3,9 @@ var router = express.Router();
 var request = require('request');
 var rp = require('request-promise');
 var cheerio = require('cheerio');
+// import user model
+const category = require('../models/category');
 
-async function getItem(url) {
-  html = await rp(url)
-  var $ = cheerio.load(html);
-  item = {
-    name:$('#product-detail-title-product-name').text(),
-    sku:$('#product-detail-sku-number').text(),
-    price:$('#product-detail-label-product-price').text(),
-    description:$('#product-detail-label-shortdescription').text(),
-    image:$('#product-slice-image-main-desktop').attr('src'),
-  }
-  console.log(item)
-  return item
-}
 /* GET users listing. */
 router.get('/', function(req, res, next) {
   url = 'https://www.kingpower.com/product/apple-usb-c-to-lightning-cable-1-m?lang=en';
@@ -37,7 +26,9 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/product', async function(req, res, next) {
-  url = 'https://www.kingpower.com/category/home-and-living?lang=en&page=100'
+  url = 'https://www.kingpower.com/category/home-and-living?lang=en&page=1'
+  const Json2csvParser = require('json2csv').Parser;
+  const fields = ['sku', 'name', 'description', 'price', 'image', 'url'];
  
   html = await rp(url)
   var $ = cheerio.load(html);
@@ -50,7 +41,11 @@ router.get('/product', async function(req, res, next) {
     //console.log(item)
     items.push(item)
   }
-  res.send(items)
+  const json2csvParser = new Json2csvParser({ fields });
+  const csv = json2csvParser.parse(items);
+  res.setHeader('Content-Type', 'text/csv');
+  res.setHeader("Content-Disposition", 'attachment; filename=kingpower.csv');
+  res.send(csv);  
 });
 
 module.exports = router;

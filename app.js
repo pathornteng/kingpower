@@ -6,9 +6,14 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
-var users = require('./routes/users');
+var products = require('./routes/products');
+var mongoose = require('mongoose');
 
 var app = express();
+mongoose.connect('mongodb://localhost/kingpower')
+  .then(() =>  console.log('connection succesful'))
+  .catch((err) => console.error(err));
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -23,7 +28,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
-app.use('/kingpower', users);
+app.use('/products', products);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
