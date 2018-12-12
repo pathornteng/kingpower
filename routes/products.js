@@ -4,6 +4,7 @@ var request = require('request');
 var rp = require('request-promise');
 var cheerio = require('cheerio');
 var mongoose = require('mongoose');
+var url = require('url');
 mongoose.connect('mongodb://localhost/kingpower')
   .then(() =>  console.log('connection succesful'))
   .catch((err) => console.error(err));
@@ -241,6 +242,39 @@ router.get('/delete', async function(req, res, next) {
 router.get('/stop', async function(req, res, next) {
   global.stopCrawling = true
   return res.redirect('/');
+})
+
+router.post('/crawl_url', async function(req, res, next) {
+  if (global.crawling) {
+    return res.send(200)
+  } else {
+    global.crawling = true
+  }
+  targetUrl = req.body.url
+  var urlObject = url.parse(targetUrl, true);
+  var category = urlObject.query.categories
+
+  try {
+    for (var j=1; j<100; j++) {
+      if (global.stopCrawling) {
+        global.crawling = false
+        global.stopCrawling = false
+        return;
+      }
+      delete urlObject.search
+      targetUrl = url.format(urlObject)
+      var result = await getItems(targetUrl, category)
+      console.log("THIS")
+
+      urlObject = url.parse(targetUrl, true);
+      urlObject.query.page = j
+      category = urlObject.query.categories
+      if (!result) break;
+    }
+  }catch(err) {
+    console.log(err)
+  }
+  global.crawling = false 
 })
 
 router.get('/crawl', async function(req, res, next) {

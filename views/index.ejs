@@ -29,8 +29,10 @@
     }
 
     function crawl() {
-      alert("start crawling")
-      $.get("/products/crawl", function(data) {});
+      //alert("start crawling")
+      var url = $("#url").val()
+      alert(url) 
+      $.post("/products/crawl_url", { url: url }, function(data) {});
     }
 
     function deleteProducts() {
@@ -45,6 +47,7 @@
     total products : <span id="total"></span><br/>
     crawling : <span id="crawling_status"></span>
     <p>
+    Url <input type="text" size="150" id="url"><br/><br/>
     <button id="crawling" onclick="crawl()">Crawl</button>
     <a href="/products/stop"><button>Stop Crawling</button></a>
     <button onclick="deleteProducts()">Delete</button>
