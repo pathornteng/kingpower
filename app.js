@@ -14,6 +14,8 @@ mongoose.connect('mongodb://localhost/kingpower')
   .then(() =>  console.log('connection succesful'))
   .catch((err) => console.error(err));
 
+const auth = require('./auth');
+app.use(auth);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
