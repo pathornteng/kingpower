@@ -34,6 +34,60 @@ async function getItem(url) {
     item.image = $('#product-slice-image-main-desktop').attr('src')
     item.sku = $('#product-detail-sku-number').text()
   }
+  if (item.name == "") {
+    item.name = $('h4[data-reactid=252]').text()
+    item.sku = $('h5[data-reactid=257]').text()
+    item.price = $('span[data-reactid=261]').text()
+    item.description = $('div[data-reactid=253]').text()
+    item.image = $('img[data-reactid=247]').attr('src')
+  }
+  if (item.name == "") {
+    item.name = $('h2[data-reactid=329]').text()
+    item.sku = $('span[data-reactid=335]').text()
+    item.price = $('span[data-reactid=339]').text()
+    item.description = $('span[data-reactid=330]').text()
+    item.image = $('img[data-reactid=318]').attr('src')
+  }
+  //clinique
+  if (item.name == "") {
+    item.name = $('h2[data-reactid=310]').text()
+    item.sku = $('small[data-reactid=313]').text()
+    item.price = $('span[data-reactid=321]').text()
+    item.description = $('p[data-reactid=314]').text()
+    item.image = $('img[data-reactid=301]').attr('src')
+  }
+  //lamare
+  if (item.name == "") {
+    item.name = $('h1[data-reactid=197]').text()
+    item.sku = $('div[data-reactid=218]').text()
+    item.price = $('span[data-reactid=194]').text()
+    item.description = $('p[data-reactid=203]').text()
+    item.image = $('img[data-reactid=165]').attr('src')
+  }
+  //lamare2
+  if (item.name == "") {
+    item.name = $('h1[data-reactid=171]').text()
+    item.sku = $('div[data-reactid=188]').text()
+    item.price = $('span[data-reactid=191]').text()
+    item.description = $('p[data-reactid=177]').text()
+    item.image = $('img[data-reactid=165]').attr('src')
+  }
+  //lamare3
+  if (item.name == "") {
+    item.name = $('h1[data-reactid=169]').text()
+    item.sku = $('div[data-reactid=186]').text()
+    item.price = $('span[data-reactid=189]').text()
+    item.description = $('p[data-reactid=175]').text()
+    item.image = $('img[data-reactid=163]').attr('src')
+  }
+  //lamare4
+  if (item.name == "") {
+    item.name = $('h1[data-reactid=192]').text()
+    item.sku = $('div[data-reactid=213]').text()
+    item.price = $('span[data-reactid=216]').text()
+    item.description = $('p[data-reactid=198]').text()
+    item.image = $('img[data-reactid=163]').attr('src')
+  }
   if (item.price == "") {
     item.price = $('#product-detail-label-product-price-discount').text()
   }
@@ -61,6 +115,24 @@ async function getItem2(url) {
     item.image = $('img[data-reactid=318]').attr('src')
   }
 
+  //clinique
+  if (item.name == "") {
+    item.name = $('h2[data-reactid=310]').text()
+    item.sku = $('small[data-reactid=313]').text()
+    item.price = $('span[data-reactid=321]').text()
+    item.description = $('p[data-reactid=314]').text()
+    item.image = $('img[data-reactid=301]').attr('src')
+  }
+
+  //lamare3
+  if (item.name == "") {
+    item.name = $('h1[data-reactid=169]').text()
+    item.sku = $('div[data-reactid=186]').text()
+    item.price = $('span[data-reactid=189]').text()
+    item.description = $('p[data-reactid=175]').text()
+    item.image = $('img[data-reactid=163]').attr('src')
+  }
+
   //lamare
   if (item.name == "") {
     item.name = $('h1[data-reactid=197]').text()
@@ -77,6 +149,15 @@ async function getItem2(url) {
     item.price = $('span[data-reactid=191]').text()
     item.description = $('p[data-reactid=177]').text()
     item.image = $('img[data-reactid=165]').attr('src')
+  }
+
+  //lamare4
+  if (item.name == "") {
+    item.name = $('h1[data-reactid=192]').text()
+    item.sku = $('div[data-reactid=213]').text()
+    item.price = $('span[data-reactid=216]').text()
+    item.description = $('p[data-reactid=198]').text()
+    item.image = $('img[data-reactid=163]').attr('src')
   }
 
   item.category = "beauty"
@@ -96,27 +177,36 @@ async function getItems(url, category) {
   for(var i=0;i<products.length;i++) {
     var url = 'https://www.kingpower.com' + $('.s1xmjep2-7.fCMcWq')[i].attribs.href;
     console.log(url)
-    var item = await getItem(url)
-    item.category = category
-    if (item.sku == "") {
-      item.sku = Date.now()
-    }
-    var foundItem = await Product.find({ sku: item.sku })
-    //console.log(foundItem)
-    if (foundItem.length == 0) {
-      console.log("create new")
-      var result = await Product.create(item, function (err, post) {});
-      //console.log(result)
-    } else {
-      console.log("-----------> found duplication")
-      console.log(item.name, item.sku, foundItem[0].name, foundItem[0].sku)
-      foundItem.category = item.category
-      var result = await Product.updateOne(foundItem.Id, foundItem, function (err, post) {});
-      //console.log(result)
-    }
+    getItem(url).then(function(item) {
+      item.category = category
+      item.price = parseInt(item.price.replace(",",""))
+      item.image = item.image.replace(",","%2C")
+      if (item.sku == "") {
+        item.sku = Date.now()
+      }
+      Product.find({ sku: item.sku }, function(err, foundItem) {
+        if (foundItem.length == 0) {
+          console.log("create new")
+          var result = Product.create(item, function (err, post) {});
+          //console.log(result)
+        } else {
+          console.log("-----------> found duplication")
+          console.log(item.name, item.sku, foundItem[0].name, foundItem[0].sku)
+          foundItem.category = item.category
+          var result = Product.updateOne(foundItem.Id, foundItem, function (err, post) {});
+          //console.log(result)
+        }
+      })
+    })
   }
   return true
 }
+
+router.get('/total', async function(req, res, next) {
+  var total = await Product.find().count()
+  res.setHeader('Content-Type', 'application/json');
+  res.send(JSON.stringify({ total: total, crawling: global.crawling }, null, 4));
+})
 /* GET users listing. */
 router.get('/item', async function(req, res, next) {
   var items = await Product.find({ name: ""})
@@ -143,7 +233,22 @@ router.get('/item', async function(req, res, next) {
   }
 });
 
+router.get('/delete', async function(req, res, next) {
+  await Product.deleteMany({})
+  return res.redirect('/');
+})
+
+router.get('/stop', async function(req, res, next) {
+  global.stopCrawling = true
+  return res.redirect('/');
+})
+
 router.get('/crawl', async function(req, res, next) {
+  if (global.crawling) {
+    return res.send(200)
+  } else {
+    global.crawling = true
+  }
   const urls = ["https://www.kingpower.com/category/beauty/skincare?availability=dutyfree",
                 "https://www.kingpower.com/category/beauty/skincare/facial?availability=dutyfree",
                 "https://www.kingpower.com/category/beauty/skincare/body?availability=dutyfree",
@@ -157,11 +262,17 @@ router.get('/crawl', async function(req, res, next) {
       "Makeup", "Face", "Eyes", "Lips", "Perfumes", "Travel Exclusive"]
   for (var i=0; i<urls.length; i++) {
     for (var j=0; j<100; j++) {
+      if (global.stopCrawling) {
+        global.crawling = false
+        global.stopCrawling = false
+        return;
+      }
       var url = urls[i] + '&page=' + j
       var result = await getItems(url, categories[i])
       if (!result) break;
     }
   }
+  global.crawling = false
 });
 
 router.get('/export', async function(req, res, next) {
@@ -172,7 +283,7 @@ router.get('/export', async function(req, res, next) {
   const products = await Product.find()
   console.log(products)
  
-  const json2csvParser = new Json2csvParser({ fields });
+  const json2csvParser = new Json2csvParser({ fields, encoding: 'utf-8' });
   const csv = json2csvParser.parse(products);
   res.setHeader('Content-Type', 'text/csv;charset=utf-8');
   res.setHeader("Content-Disposition", 'attachment; filename=kingpower.csv');
