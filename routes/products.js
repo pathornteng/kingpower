@@ -176,7 +176,7 @@ async function getItems(url, category) {
   }
   //var items = []
   for(var i=0;i<products.length;i++) {
-    var url = 'https://www.kingpower.com' + $('.s1xmjep2-7.fCMcWq')[i].attribs.href;
+    var url = 'https://www.kingpower.com' + $('.s1xmjep2-7.fCMcWq')[i].attribs.href + "?lang=th";
     console.log(url)
     getItem(url).then(function(item) {
       item.category = category
