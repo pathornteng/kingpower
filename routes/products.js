@@ -181,7 +181,7 @@ async function getItems(url, category) {
     getItem(url).then(function(item) {
       item.category = category
       item.price = parseInt(item.price.replace(",",""))
-      item.image = item.image.replace(",","%2C")
+      item.image = item.image.replace(/,/g,"%2C")
       if (item.sku == "") {
         item.sku = Date.now()
       }
