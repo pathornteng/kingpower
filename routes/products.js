@@ -90,7 +90,7 @@ async function getItem(url) {
     item.image = $('img[data-reactid=163]').attr('src')
   }
   if (item.price == "") {
-    item.price = $('#product-detail-label-product-price-discount').text()
+    item.price = $('#product-detail-label-product-previous-price').text()
   }
   console.log(item)
   return item
